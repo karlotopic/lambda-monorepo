@@ -1,0 +1,21 @@
+name: Finalize Bookings Scheduler
+on:
+  push:
+    branches:
+      # - master
+    paths:
+      - "lambda/function-2/**"
+      - ".github/workflows/**"
+jobs:
+  function-2:
+    name: Zip and deploy function-2
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+      - run: zip -j function-2.zip ./lambda/function-2/index.mjs
+      - run: aws lambda update-function-code --function-name=awsLambdaFunctionName2 --zip-file=fileb://function-2.zip
